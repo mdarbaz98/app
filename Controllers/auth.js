@@ -7,11 +7,11 @@ dotenv.config()
 export const register = async (req, res) => {
     try {
         const {
-            firstName,
-            lastName,
+            first_name,
+            last_name,
             email,
             password,
-            profilePicture,
+            profile_picture,
             friends,
             location,
             occupation,
@@ -37,20 +37,23 @@ export const register = async (req, res) => {
                 ?,?,
                 ?,?)`,
             [
-                firstName,
-                lastName,
+                first_name,
+                last_name,
                 email,
                 passwordHash,
-                profilePicture,
+                profile_picture,
                 friends,
                 location,
                 occupation,
             ],
             (err, result) => {
-                if (err) throw err;
+                if (err) return res.status(500).json({error: err.message})
                 res.status(201).json(result);
             }
         );
+
+        pool.releaseConnection();
+
     } catch (error) { res.status(500).json({error: error.message}) }
 };
 
@@ -67,7 +70,7 @@ export const login = async (req, res) => {
         const query = 'SELECT * FROM user WHERE email = ?';
 
         pool.query(query,[email], async (err, result) => {
-            if(err) console.log(err);
+            if(err) return res.status(500).json({error: err.message});
             if (result.length === 0) {
                 res.status(200).json({message: "No User with This Email."})
             } else {
@@ -79,6 +82,8 @@ export const login = async (req, res) => {
                 res.status(200).json({token,result})
             }
         })
+
+        pool.releaseConnection();
 
     } catch (error) {
         res.status(500).json({error: error.message})

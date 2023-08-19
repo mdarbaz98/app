@@ -10,6 +10,8 @@ import path from "path";
 import  {fileURLToPath}  from "url";
 import {register} from "./Controllers/auth.js"
 import  authRoutes  from './routes/auth.js'
+import  userRoutes  from './routes/user.js'
+import  postRoutes  from './routes/post.js'
 
 // configuration 
 const __filename = fileURLToPath(import.meta.url)
@@ -40,10 +42,13 @@ const storage = multer.diskStorage({
 const upload = multer({storage})
 
 
-// Routes 
+// Routes With Files
 app.post("/auth/register", upload.single('image'), register);
+// app.post("/auth/register", upload.single('image'), register);
 
 app.use("/auth",authRoutes)
+app.use("/user",userRoutes)
+app.use("/post",postRoutes)
 
 app.listen(PORT,() => {
     console.log(`server started on port ${PORT}`)
